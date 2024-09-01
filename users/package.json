@@ -12,7 +12,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@apollo/federation": "^0.38.1",
+    "@apollo/server": "^4.11.0",
     "@prisma/client": "^5.19.0",
+    "apollo-datasource": "^3.3.2",
     "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",
     "express": "^4.19.2",

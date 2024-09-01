@@ -6,6 +6,7 @@ import http from "http";
 import { OrderApi } from "./datasource/orderApi.js";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { buildSubgraphSchema } from "@apollo/federation";
+import jwt from "jsonwebtoken";
 // import { router as orderRoutes } from "./routes/order.route.js";
 // import { kafka } from "../../shared/src/index.js";
 // import { router } from "./routes/order_product.route.js";

@@ -8,6 +8,11 @@ export const typeDefs = gql`
 extend type Query {
   getAllOrders: [Order]
 }
+
+type Mutation {
+  addOrder(order:OrderInput):Order
+}
+
 type Order {
   id: String
   orderNumber: String
@@ -51,6 +56,25 @@ enum OrderStatus {
   PENDING
   COMPLETED
   CANCELED
+}
+
+input OrderInput {
+  id: String
+  orderNumber: String
+  orderDate: Date
+  totalAmount: Float
+  status: OrderStatus
+  createdAt: DateTime
+  updatedAt: DateTime
+  userId: String
+  productId: String
+  products: [OrderProductInput]
+}
+
+input OrderProductInput {
+  orderId: String
+  productId: String
+  quantity: Int
 }
 
 `;

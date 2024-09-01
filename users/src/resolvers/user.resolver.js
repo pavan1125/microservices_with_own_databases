@@ -18,7 +18,9 @@ export const resolvers = {
         console.log(error)
         return error
       }
-    }
+    },
+
+    
   },
   Mutation: {
     createUser: async (_, { name, password },{dataSources}) => {
@@ -38,6 +40,15 @@ export const resolvers = {
             console.log(error)
             throw new Error('Error while deleting user')
         }
-    }
+    },
+    login: async (_, { name, password }, { dataSources }) => {
+      try {
+        const { token } = await dataSources.userApi.generateToken(name, password);
+        return { token };
+      } catch (error) {
+        console.log(error);
+        throw new Error("Authentication failed");
+      }
+    },
   },
 };

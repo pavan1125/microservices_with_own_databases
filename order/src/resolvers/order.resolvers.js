@@ -1,3 +1,5 @@
+
+import {generateRandomString} from "../utils/common.js"
 export const resolvers = {
   Query: {
     getAllOrders: async (_, __, { dataSources }) => {
@@ -10,13 +12,13 @@ export const resolvers = {
         if(!user){
           return "need to login to add order"
         }
-        const userFromDb= await dataSources.userApi.getUserById(user.id)
+        const userFromDb= await dataSources.usersApi.getUserById(user.id)        
         if(!userFromDb){
           return "user not found please sign up"
         }
         order.userId=userFromDb.id
         order.orderNumber=generateRandomString(6)
-        return await dataSources.ordersApi.addOrder(order);
+        return await dataSources.ordersApi.addOrderToDb(order);
       } catch (error) {
         console.log(error);
         return error;
@@ -25,7 +27,8 @@ export const resolvers = {
   },
   Order: {
     user: async (order, _, { dataSources }) => {
-      return { __typename: "User", id: order.userId };
+      const user= await dataSources.usersApi.getUserById(order.userId)
+      return user
     },
   },
 };

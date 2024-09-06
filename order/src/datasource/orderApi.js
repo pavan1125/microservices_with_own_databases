@@ -7,7 +7,11 @@ export class OrderApi extends DataSource{
 
    async getAllOrders(){
         try {
-            const orders= await db.order.findMany()
+            const orders= await db.order.findMany({
+                include:{
+                    products:true
+                }
+            })
             return orders
         } catch (error) {
             console.log(error)
@@ -15,11 +19,11 @@ export class OrderApi extends DataSource{
         }
     }
 
-    async addOrder(order){
+    async addOrderToDb(order){
         try {
             const orderCreated= await db.order.create({
                 data:{
-                    order
+                    ...order
                 }
             })
             return orderCreated

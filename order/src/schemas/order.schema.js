@@ -16,7 +16,7 @@ type Mutation {
 type Order {
   id: String
   orderNumber: String
-  orderDate: Date
+  orderDate: DateTime
   totalAmount: Float
   status: OrderStatus
   createdAt: DateTime
@@ -30,6 +30,7 @@ type Order {
 
 type User @key(fields: "id") {
   id: ID!
+  name:String
 }
 
 type OrderProduct {
@@ -38,12 +39,12 @@ type OrderProduct {
   quantity: Int
 
   order: Order
-  product: ProductInfo 
+  product: Product 
 }
 
 
-type ProductInfo {
-  id: String
+type Product {
+  id: ID!
   name: String
   description: String
   price: Float
@@ -61,7 +62,7 @@ enum OrderStatus {
 input OrderInput {
   id: String
   orderNumber: String
-  orderDate: Date
+  orderDate: DateTime
   totalAmount: Float
   status: OrderStatus
   createdAt: DateTime

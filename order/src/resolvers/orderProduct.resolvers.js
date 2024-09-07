@@ -1,3 +1,5 @@
+import { orderProductConsumer } from "../kafka/consumer.js";
+import { kafka } from "../kafka/index.js";
 export const resolvers = {
   Query: {
     getAllOrderProducts: async (_, __, { dataSources }) => {
@@ -12,23 +14,40 @@ export const resolvers = {
     },
   },
   Mutation: {
-    OrderProduct: async (orderProduct, _, { dataSources }) => {
+    addOrderProduct: async (_, { orderProduct }, { dataSources, user }) => {
       try {
-        //TODO: add the productApi to the dataSource
-        const product = await dataSources.productApi.getProductById(
-          orderProduct.productId
-        );
-        return product;
+        if (!user) {
+          return "need to login to add order";
+        }
+        const userFromDb = await dataSources.usersApi.getUserById(user.id);
+        if (!userFromDb) {
+          return "user not found please sign up";
+        }
+        // const orderProductAdded =
+        // await dataSources.orderProductsApi.addOrderProductToDb(orderProduct);
+        const producer = kafka.producer();
+        await producer.connect();
+        await producer.send({
+          topic: "order_product_added",
+          messages: [
+            { value: JSON.stringify({ orderProduct, userId: user.id }) },
+          ],
+        });
+        return await orderProductConsumer(dataSources);
+        // return orderProductAdded;
       } catch (error) {
         console.log(error);
         return error;
       }
     },
-    addOrderProduct: async (orderProduct, _, { dataSources }) => {
+  },
+  OrderProduct: {
+    product: async (orderProduct, _, { dataSources }) => {
       try {
-        const orderProductAdded =
-          await dataSources.orderProductApi.addOrderProductToDb(orderProduct);
-        return orderProductAdded;
+        const product = await dataSources.productApi.getProductById(
+          orderProduct.productId
+        );
+        return product;
       } catch (error) {
         console.log(error);
         return error;

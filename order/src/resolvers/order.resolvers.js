@@ -1,5 +1,5 @@
-
-import {generateRandomString} from "../utils/common.js"
+import { generateRandomString } from "../utils/common.js";
+import { kafka } from "../kafka/index.js";
 export const resolvers = {
   Query: {
     getAllOrders: async (_, __, { dataSources }) => {
@@ -7,17 +7,17 @@ export const resolvers = {
     },
   },
   Mutation: {
-    addOrder: async (_, {order}, { dataSources,user }) => {
+    addOrder: async (_, { order }, { dataSources, user }) => {
       try {
-        if(!user){
-          return "need to login to add order"
+        if (!user) {
+          return "need to login to add order";
         }
-        const userFromDb= await dataSources.usersApi.getUserById(user.id)        
-        if(!userFromDb){
-          return "user not found please sign up"
+        const userFromDb = await dataSources.usersApi.getUserById(user.id);
+        if (!userFromDb) {
+          return "user not found please sign up";
         }
-        order.userId=userFromDb.id
-        order.orderNumber=generateRandomString(6)
+        order.userId = userFromDb.id;
+        order.orderNumber = generateRandomString(6);
         return await dataSources.ordersApi.addOrderToDb(order);
       } catch (error) {
         console.log(error);
@@ -27,8 +27,8 @@ export const resolvers = {
   },
   Order: {
     user: async (order, _, { dataSources }) => {
-      const user= await dataSources.usersApi.getUserById(order.userId)
-      return user
+      const user = await dataSources.usersApi.getUserById(order.userId);
+      return user;
     },
   },
 };

@@ -32,6 +32,12 @@ export class ProductApi extends DataSource {
             `,
           }),
       });
-    } catch (error) {}
+      const { data } = await product.json();
+      return data.getProductById;
+      
+    } catch (error) {
+      console.log(error)
+      return error
+    }
   }
 }

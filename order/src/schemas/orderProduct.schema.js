@@ -9,7 +9,6 @@ export const typeDefs = gql`
     name: String
   }
   type OrderProduct {
-    id: ID!
     orderId: String
     productId: String
     order: Order
@@ -60,7 +59,7 @@ export const typeDefs = gql`
     user: User @requires(fields: "userId")
   }
   
-  type OrderProductInput {
+  input OrderProductInput {
     orderId:String
     productId:String
     quantity:Int

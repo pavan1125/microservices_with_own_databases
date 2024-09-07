@@ -18,4 +18,35 @@ export class InventoryApi extends DataSource {
       return error;
     }
   }
+
+  async getInventoryByIdFromDb(id) {
+    try {
+      const inventory = await db.inventory.findFirst({
+        where: {
+          id,
+        },
+      });
+      return inventory;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  async updateStockBySkuInDb(sku,quantity){
+    try {
+      const updatedInventory= await db.inventory.update({
+        where:{
+          sku
+        },
+        data:{
+          quantity
+        }
+      })
+      return updatedInventory
+    } catch (error) {
+      console.log(error)
+      return error
+    }
+  }
 }

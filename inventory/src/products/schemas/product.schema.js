@@ -5,7 +5,10 @@ export const typeDefs = gql`
     getAllProducts: [Product]
     getProductById(id:ID!): Product
   }
-
+  
+  type Mutation{
+    addProduct(product:productInput):Product
+  }
   type Inventory {
     id: ID!
     sku: String
@@ -27,5 +30,11 @@ export const typeDefs = gql`
     orderIds: [String]
     orderProductIds: [String]
     inventory: Inventory
+  }
+  input productInput{
+    name: String
+    description: String
+    price: Float
+    sku: String
   }
 `;

@@ -14,6 +14,7 @@ import { url } from "inspector";
 import { OrderProductApi } from "./datasource/orderProduct.js";
 import { mergeTypeDefs, mergeResolvers } from "@graphql-tools/merge";
 import { ProductApi } from "./datasource/productApi.js";
+import { InventoryApi } from "./datasource/inventoryApi.js";
 // import { router as orderRoutes } from "./routes/order.route.js";
 // import { kafka } from "../../shared/src/index.js";
 // import { router } from "./routes/order_product.route.js";
@@ -232,6 +233,9 @@ const server = new ApolloServer({
         usersApi: new UsersAPI({ url: "http://localhost:3003/graphql" }),
         orderProductsApi: new OrderProductApi(),
         productApi: new ProductApi({ url: "http://localhost:3002/graphql" }),
+        inventoryApi: new InventoryApi({
+          url: "http://localhost:3002/graphql",
+        }),
       },
     };
   },

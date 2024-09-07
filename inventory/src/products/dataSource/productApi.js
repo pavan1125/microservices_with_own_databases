@@ -35,4 +35,18 @@ export class ProductApi extends DataSource {
       return error;
     }
   }
+
+  async addProductToDb(product) {
+    try {
+      const addedProduct = await db.product.create({
+        data: {
+          ...product,
+        },
+      });
+      return addedProduct;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
 }

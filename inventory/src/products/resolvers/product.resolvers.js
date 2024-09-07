@@ -19,4 +19,15 @@ export const resolvers = {
       }
     },
   },
+  Mutation:{
+     addProduct:async(_,{product},{dataSources})=>{
+       try {
+        const productAdded= await dataSources.productApi.addProductToDb(product)
+        return productAdded
+       } catch (error) {
+        console.log(error)
+        return error
+       }
+     }
+  }
 };

@@ -3,11 +3,12 @@ import { gql } from "apollo-server-express";
 export const typeDefs = gql`
   type Query {
     getAllInventory: [Inventory]
-    getInventoryById(id:String):Inventory
+    getInventoryById(id: String): Inventory
+    getInventoryBySku(sku: String): Inventory
   }
-   type Mutation {
-     updateStock(sku:String):Inventory
-   }
+  type Mutation {
+    updateStock(sku: String): Inventory
+  }
   type Inventory {
     id: ID!
     sku: String

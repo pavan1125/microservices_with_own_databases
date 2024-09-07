@@ -71,4 +71,37 @@ export class InventoryApi extends DataSource {
       return error;
     }
   }
+
+  async getInventoryBySku(sku) {
+    try {
+      const updated = await fetch(this.URL, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          query: `
+              query {
+                getInventoryBySku({sku:"${sku}"}) {
+                  id
+                  quantity
+                  sku
+                  product{
+                   id
+                   sku
+                   name
+                   price
+                  }
+                }
+              }
+            `,
+        }),
+      });
+      const { data } = await updated.json();
+      return data.getInventoryBySku;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
 }

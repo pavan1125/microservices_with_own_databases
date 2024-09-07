@@ -100,4 +100,50 @@ services:
       - POSTGRES_USER=test
       - POSTGRES_PASSWORD=test
       - POSTGRES_DB=inventorydb
+  gateway:
+    container_name: gateway
+    build: 
+      context: .
+      dockerfile: ./gateway/Dockerfile
+    ports:
+      - 4000:4000
+    volumes:
+      - ./gateway:/usr/src/gateway
+  users:
+    container_name: users
+    build:
+      context: .
+      dockerfile: ./users/Dockerfile
+    ports:
+      - 3003:3003
+    volumes:
+      - ./users:/usr/src/users
+    depends_on:
+      - userdb
+      - gateway
+    network_mode: "host"
+  order:
+    container_name: order
+    build:
+      context: .
+      dockerfile: ./order/Dockerfile
+    ports:
+      - 3001:3001
+    volumes:
+      - ./order:/usr/src/order
+    depends_on:
+      - orderdb
+      - gateway
+  inventory:
+    container_name: inventory
+    build:
+      context: .
+      dockerfile: ./inventory/Dockerfile
+    ports:
+      - 3002:3002
+    volumes:
+      - ./inventory:/usr/src/inventory
+    depends_on:
+      - inventorydb
+      - gateway
   

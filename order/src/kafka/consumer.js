@@ -4,7 +4,12 @@ export const orderProductConsumer = async (dataSources) => {
   const consumer = kafka.consumer({ groupId: "order-product-group" });
   await consumer.connect();
   await consumer.subscribe({
-    topics: ["order_product_added", "order_product_deleted", "order_deleted"],
+    topics: [
+      "order_product_added",
+      "order_product_deleted",
+      "order_deleted",
+      "order_status_updated",
+    ],
     fromBeginning: true,
   });
   return await consumer.run({
@@ -12,7 +17,37 @@ export const orderProductConsumer = async (dataSources) => {
       try {
         const messageValue = JSON.parse(message.value);
         console.log("🚀 ~ eachMessage: ~ messageValue:", messageValue);
-        //TODO:produce event
+
+        if (topic === "order_status_updated") {
+          console.log("asdas", messageValue);
+          if (messageValue.status === "PENDING") {
+            return;
+          }
+          if (messageValue.status === "SHIPPED") {
+            const products = messageValue.products;
+            products.forEach(async (product) => {
+              const pro = await dataSources.productApi.getProductById(
+                product.productId
+              );
+              const inventory =
+                await dataSources.inventoryApi.getInventoryBySku(pro.sku);
+              console.log({ pro, inventory });
+              const stockNeedToRemove = product.quantity;
+              const updatedStock = inventory.quantity - stockNeedToRemove;
+              await dataSources.inventoryApi.updateStock(
+                inventory.sku,
+                updatedStock
+              );
+            });
+          }
+          if (messageValue.status === "DELIVERED") {
+            return;
+          }
+          if (messageValue.status === "CANCELLED") {
+            return;
+          }
+          return;
+        }
         if (topic === "order_deleted") {
           const orderProducts = messageValue.products;
           if (
@@ -20,7 +55,10 @@ export const orderProductConsumer = async (dataSources) => {
             Array.isArray(orderProducts)
           ) {
             orderProducts.forEach(async (order) => {
-              await dataSources.orderProductsApi.deleteOrderProduct(order.orderId, order.productId);
+              await dataSources.orderProductsApi.deleteOrderProduct(
+                order.orderId,
+                order.productId
+              );
             });
           } else if (
             messageValue.status === "SHIPPED" &&
@@ -28,8 +66,13 @@ export const orderProductConsumer = async (dataSources) => {
           ) {
             //add the quantity back to the stock in inventory
             orderProducts.forEach(async (order) => {
-              const product= await dataSources.productApi.getProductById(order.productId)
-              await dataSources.inventoryApi.updateStock(product.sku,order.quantity)
+              const product = await dataSources.productApi.getProductById(
+                order.productId
+              );
+              await dataSources.inventoryApi.updateStock(
+                product.sku,
+                order.quantity
+              );
               // await fetch(
               //   `http://localhost:3002/inventory/${product.sku}/stock`,
               //   {
@@ -37,11 +80,13 @@ export const orderProductConsumer = async (dataSources) => {
               //     body: JSON.stringify({ quantity: order.quantity }),
               //   }
               // );
-              await dataSources.orderProductsApi.deleteOrderProduct(order.orderId, order.productId);
+              await dataSources.orderProductsApi.deleteOrderProduct(
+                order.orderId,
+                order.productId
+              );
             });
           }
-          await dataSources.ordersApi.deleteOrderFromDb(messageValue.id);
-          return;
+          return await dataSources.ordersApi.deleteOrderFromDb(messageValue.id);
         }
 
         // check weather the inventory has stock or not using the kafka event and consume it before order product is added to db and manage the order product , adjust the total price of the order
@@ -63,7 +108,6 @@ export const orderProductConsumer = async (dataSources) => {
         //   }
         // );
         // const product = await response.json();
-        //TODO:produce event
         if (topic === "order_product_deleted") {
           // if orderProduct is deleted update the order
           const deletedQuantity = messageValue.quantity;
@@ -71,7 +115,10 @@ export const orderProductConsumer = async (dataSources) => {
           const totalPrice = orderExists.totalAmount;
           const updatedPrice =
             totalPrice - deletedQuantity * deletedProductPrice;
-          await dataSources.ordersApi.updateOrderTotalAmount(updatedPrice, messageValue.orderId);
+          await dataSources.ordersApi.updateOrderTotalAmount(
+            updatedPrice,
+            messageValue.orderId
+          );
           return;
         }
         if (orderProductExists) {

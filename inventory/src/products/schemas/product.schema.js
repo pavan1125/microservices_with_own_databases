@@ -8,6 +8,7 @@ export const typeDefs = gql`
   
   type Mutation{
     addProduct(product:productInput):Product
+    deleteProduct(sku:String):Product
   }
   type Inventory {
     id: ID!

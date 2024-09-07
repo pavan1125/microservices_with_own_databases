@@ -71,10 +71,26 @@ export class OrderApi extends DataSource {
           id,
         },
       });
-      return deleted
+      return deleted;
     } catch (error) {
       console.log(error);
       return error;
+    }
+  }
+
+  async updateOrderStatus(id, status) {
+    try {
+      const updated = await db.order.update({
+        where: {
+          id,
+        },
+        data: {
+          status,
+        },
+      });
+    } catch (error) {
+      console.log(error)
+      return error
     }
   }
 }

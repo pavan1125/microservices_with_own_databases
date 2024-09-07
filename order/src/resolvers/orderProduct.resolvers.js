@@ -33,8 +33,36 @@ export const resolvers = {
             { value: JSON.stringify({ orderProduct, userId: user.id }) },
           ],
         });
+        await producer.disconnect();
         return await orderProductConsumer(dataSources);
         // return orderProductAdded;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    },
+    deleteOrderProduct: async (_, { orderId, productId }, { dataSources }) => {
+      try {
+        const orderProduct =
+          await dataSources.orderProductsApi.checkOrderProductExists(
+            orderId,
+            productId
+          );
+        if (!orderProduct) {
+          throw new Error(
+            `OrderProduct ${(orderId, productId)} does not exist`
+          );
+        }
+        await dataSources.orderProductsApi.deleteOrderProduct(
+          orderId,
+          productId
+        );
+        const producer = kafka.producer();
+        await producer.connect();
+        await producer.send({
+          topic: "order_product_deleted",
+          messages: [{ value: JSON.stringify(orderProduct) }],
+        });
       } catch (error) {
         console.log(error);
         return error;

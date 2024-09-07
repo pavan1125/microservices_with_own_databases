@@ -6,18 +6,12 @@ COPY users/package*.json ./
 
 RUN npm install
 
-# COPY ../shared/package*.json /usr/src/shared/
 
-# RUN cd /usr/src/shared && npm install
+COPY users/src/* usr/src/users/src/
+COPY users/prisma /usr/src/users/prisma
 
-# COPY ../shared/prisma ./shared/prisma
-
-# COPY ../shared/src  /usr/src/shared/src
-
-COPY users/src ./src
-
-# RUN npx prisma generate --schema=./shared/prisma/schema.prisma
+RUN npx prisma generate
 
 EXPOSE 3003
 
-CMD ["node", "src/index.js"]
+CMD ["npm", "start"]

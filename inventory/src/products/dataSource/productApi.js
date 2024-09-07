@@ -49,4 +49,32 @@ export class ProductApi extends DataSource {
       return error;
     }
   }
+
+  async deleteProductFromDb(sku) {
+    try {
+      const deleted = await db.product.delete({
+        where: {
+          sku,
+        },
+      });
+      return deleted;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  async getProductBySku(sku) {
+    try {
+      const product = await db.product.findFirst({
+        where: {
+          sku,
+        },
+      });
+      return product;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
 }

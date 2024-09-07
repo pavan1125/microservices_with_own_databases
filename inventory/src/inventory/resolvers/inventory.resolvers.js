@@ -21,6 +21,15 @@ export const resolvers = {
         return error;
       }
     },
+    getInventoryBySku: async (_, { sku }, { dataSources }) => {
+      try {
+        const inventory = await dataSources.inventoryApi.getInventoryBySku(sku);
+        return inventory;
+      } catch (error) {
+        console.log(error)
+        return error
+      }
+    },
   },
   Mutation: {
     updateStock: async (_, { sku, quantity }, { dataSources }) => {

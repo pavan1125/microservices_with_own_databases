@@ -64,7 +64,12 @@ export const typeDefs = gql`
     productId:String
     quantity:Int
   }
+  input deleteOrderProductInput{
+    orderId:String
+    productId:String
+  }
   type Mutation {
       addOrderProduct(orderProduct:OrderProductInput):OrderProduct
+      deleteOrderProduct(orderProduct:deleteOrderProductInput):OrderProduct
   }
 `;

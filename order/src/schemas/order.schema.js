@@ -11,8 +11,14 @@ extend type Query {
 
 type Mutation {
   addOrder(order:OrderInput):Order
+  deleteOrder(id:String):Order
+  updateOrderStatus(updateStatus:updateOrderStatus):Order
 }
 
+input updateOrderStatus{
+  status:OrderStatus
+  id:String
+}
 type Order {
   id: String
   orderNumber: String

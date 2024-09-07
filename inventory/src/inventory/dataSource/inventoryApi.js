@@ -33,20 +33,62 @@ export class InventoryApi extends DataSource {
     }
   }
 
-  async updateStockBySkuInDb(sku,quantity){
+  async updateStockBySkuInDb(sku, quantity) {
     try {
-      const updatedInventory= await db.inventory.update({
-        where:{
-          sku
+      const updatedInventory = await db.inventory.update({
+        where: {
+          sku,
         },
-        data:{
-          quantity
-        }
-      })
-      return updatedInventory
+        data: {
+          quantity,
+        },
+      });
+      return updatedInventory;
     } catch (error) {
-      console.log(error)
-      return error
+      console.log(error);
+      return error;
+    }
+  }
+
+  async deleteInventoryFromDb(sku) {
+    try {
+      const deleted = await db.inventory.delete({
+        where: {
+          sku,
+        },
+      });
+      return deleted;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  async getInventoryBySku(sku) {
+    try {
+      const inventory = await db.inventory.findFirst({
+        where: {
+          sku,
+        },
+      });
+      return inventory;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  async addInventoryToDb(inventory) {
+    try {
+      const inventory = await db.inventory.create({
+        data: {
+          ...inventory,
+        },
+      });
+      return inventory;
+    } catch (error) {
+      console.log(error);
+      return error;
     }
   }
 }
